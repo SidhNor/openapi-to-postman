@@ -223,3 +223,67 @@ $ openapi2postmanv2 -s spec.yaml -o collection.json -p -g postman-testsuite.json
 | request.url.variables | parameter (`in = path`) | - | [link](#Header/Path-param-conversion-example) |
 | request.url.params | parameter (`in = query`) | - | {"key": param.name, "value": [link](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.1.md#style-examples)}|
 | api_key in (query or header) | components.securitySchemes.api_key | - ||
+
+## Postman test generation
+
+This CLI option will provide the option to add basic Postman test and/or add manual defined Postman tests.
+The goal is to allow easy usage of OpenApi based generated Postman collections with integrated tests, ready to be used
+by the Newman test runner.
+
+To generate the tests, define a JSON file like the example (postman-testsuite.json) below and run the CLI with the --generate option.
+
+```terminal
+$ openapi2postmanv2 -s spec.yaml -o collection.json -p -g postman-testsuite.json
+```
+
+Current postman-testsuite JSON properties
+
+```JSON
+{
+  "version": 1.0,
+  "generateTests": {
+    "responseChecks": {
+      "StatusSuccess": {
+        "enabled": true
+      },
+      "responseTime": {
+        "enabled": true,
+        "maxMs": 300
+      },
+      "contentType": {
+        "enabled": true
+      },
+      "jsonBody": {
+        "enabled": true
+      },
+      "schemaValidation": {
+        "enabled": true
+      }
+    }
+  },
+  "extendTests": [
+    {
+      "openApiOperationId": "get-lists",
+      "tests": [
+        "pm.test('200 ok', function(){pm.response.to.have.status(200);});",
+        "pm.test('check userId after create', function(){Number.isInteger(responseBody);}); postman.setEnvironmentVariable(\"userId\", responseBody);"
+      ]
+    }
+  ]
+}
+```
+
+The JSON test suite format consists out of 3 parts:
+- **version** : which refers the JSON test suite version (not relevant but might handy for future backward compatibility options).
+- **generateTests** : which refers the default available generated postman tests. The default tests are grouped per type (response, request)
+  - **responseChecks** : All response basic checks. (For now we have only included response checks).
+- **extendTests**:  which refers the custom additions of manual created postman tests. The manual tests are added during
+generation. The tests are mapped based on the OpenApi operationId.
+
+| name                                | id                  | type    | default/0 | availableOptions/0 | availableOptions/1 | description                                                                                                                                                  | external | usage/0         |
+|-------------------------------------|---------------------|---------|-----------|--------------------|--------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------|----------|-----------------|
+| Response status success (2xx) check | generaStatusSuccess | boolean | false     | enabled            |                    | Adds the check if the response of the postman request return a 2xx                                                                                           | true     | TEST GENERATION |
+| Response time check                 | responseTime        | boolean | false     | enabled            | maxMs 300          | Adds the check if the response of the postman request is within a number of ms.                                                                              | true     | TEST GENERATION |
+| Response content-type check         | contentType         | boolean | false     | enabled            |                    | Adds the check if the postman response header is matching the expected content-type defined in the OpenApi spec.                                             | true     | TEST GENERATION |
+| Response JSON body format check     | jsonBody            | boolean | false     | enabled            |                    | Adds the check if the postman response body is matching the expected content-type defined in the OpenApi spec.                                               | true     | TEST GENERATION |
+| Response Schema validation check    | jsonBody            | boolean | false     | enabled            |                    | Adds the check if the postman response body is matching the JSON schema defined in the OpenApi spec. The JSON schema is inserted inline in the postman test. | true     | TEST GENERATION |

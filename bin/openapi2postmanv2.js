@@ -8,9 +8,9 @@ var _ = require('lodash'),
   inputFile,
   outputFile,
   prettyPrintFlag,
+  testFlag,
   configFile,
   definedOptions,
-  testFlag,
   testsuiteFile,
   swaggerInput,
   swaggerData;
@@ -81,6 +81,7 @@ prettyPrintFlag = program.pretty || false;
 configFile = program.optionsConfig || false;
 definedOptions = (!(program.options instanceof Array) ? program.options : {});
 testsuiteFile = program.generate || false;
+testsuiteFile = program.generate || false;
 swaggerInput;
 swaggerData;
 
@@ -131,7 +132,7 @@ function convert(swaggerData) {
 
   if (testsuiteFile) {
     testsuiteFile = path.resolve(testsuiteFile);
-    console.log('Testsuite file: ', testsuiteFile); // eslint-disable-line no-console
+    console.log('Testsuite file: ', testsuiteFile);
     options.testSuite = true;
     options.testSuiteSettings = JSON.parse(fs.readFileSync(testsuiteFile, 'utf8'));
   }
