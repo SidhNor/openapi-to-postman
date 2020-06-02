@@ -175,8 +175,8 @@ The converter can be used as a CLI tool as well. The following [command line opt
 - `-c`, `--options-config`
   Used to supply options to the converter through config file, for complete options details see [here](/OPTIONS.md)
 
-- `-g <generate>`, `--generate <generate>`
-  Used to generate postman tests given the JSON file with test options, for complete options details see [here](/TESTGENERATION.md)
+- `-g <generate>``, `--generate <generate>`
+  Used to generate postman tests given the JSON file with test options
 
 - `-h`, `--help`
   Specifies all the options along with a few usage examples on the terminal
@@ -280,6 +280,9 @@ The JSON test suite format consists out of 3 parts:
 - **extendTests**:  which refers the custom additions of manual created postman tests. The manual tests are added during
 generation. The tests are mapped based on the OpenApi operationId.
 
+See "postman-testsuite-advanced.json" file for an advanced example of the setting options.
+
+## Postman test suite properties (V1)
 | name                                | id                  | type    | default/0 | availableOptions/0 | availableOptions/1 | description                                                                                                                                                  | external | usage/0         |
 |-------------------------------------|---------------------|---------|-----------|--------------------|--------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------|----------|-----------------|
 | Response status success (2xx) check | generaStatusSuccess | boolean | false     | enabled            |                    | Adds the check if the response of the postman request return a 2xx                                                                                           | true     | TEST GENERATION |
