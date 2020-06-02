@@ -21,7 +21,7 @@
     1. [Options](#options)
     2. [Usage](#usage)
 4. [Conversion Schema](#conversion-schema)
-5. [Postman test suite generation options](/TESTGENERATION.md)
+5. [Postman test suite generation options](#postman-test-suite-generation-options)
 
 ---
 
@@ -175,7 +175,7 @@ The converter can be used as a CLI tool as well. The following [command line opt
 - `-c`, `--options-config`
   Used to supply options to the converter through config file, for complete options details see [here](/OPTIONS.md)
 
-- `-g <generate>``, `--generate <generate>`
+- `-g <generate>`, `--generate <generate>`
   Used to generate postman tests given the JSON file with test options
 
 - `-h`, `--help`
@@ -224,7 +224,7 @@ $ openapi2postmanv2 -s spec.yaml -o collection.json -p -g postman-testsuite.json
 | request.url.params | parameter (`in = query`) | - | {"key": param.name, "value": [link](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.1.md#style-examples)}|
 | api_key in (query or header) | components.securitySchemes.api_key | - ||
 
-## Postman test generation
+## Postman test suite generation options
 
 This CLI option will provide the option to add basic Postman test and/or add manual defined Postman tests.
 The goal is to allow easy usage of OpenApi based generated Postman collections with integrated tests, ready to be used
@@ -277,12 +277,21 @@ The JSON test suite format consists out of 3 parts:
 - **version** : which refers the JSON test suite version (not relevant but might handy for future backward compatibility options).
 - **generateTests** : which refers the default available generated postman tests. The default tests are grouped per type (response, request)
   - **responseChecks** : All response basic checks. (For now we have only included response checks).
-- **extendTests**:  which refers the custom additions of manual created postman tests. The manual tests are added during
-generation. The tests are mapped based on the OpenApi operationId.
+- **extendTests**:  which refers the custom additions of manual created postman tests.
+The manual tests are added during generation. The tests are mapped based on the OpenApi operationId.
+Anything added in `tests` array, will be added to the postman test scripts.
+  - **openApiOperationId (String)** : Reference to the OpenApi operationId for which the tests will be extended
+  - **tests (Array)** : Array of additional postman test scripts.
+  - **responseChecks (array)** : Extends the generateTests `responseChecks` (see [Postman test suite properties](#postman-test-suite-properties)) with specifics for the openApiOperationId.
+  - **overwrite (Boolean true/false)** : Resets all generateTests and overwrites them with the defined tests from the `tests` array.
+  Default: false
 
 See "postman-testsuite-advanced.json" file for an advanced example of the setting options.
 
-## Postman test suite properties (V1)
+## Postman test suite properties
+
+Version 1.0
+
 | name                                | id                  | type    | default/0 | availableOptions/0 | availableOptions/1 | description                                                                                                                                                  | external | usage/0         |
 |-------------------------------------|---------------------|---------|-----------|--------------------|--------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------|----------|-----------------|
 | Response status success (2xx) check | generaStatusSuccess | boolean | false     | enabled            |                    | Adds the check if the response of the postman request return a 2xx                                                                                           | true     | TEST GENERATION |
