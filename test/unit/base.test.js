@@ -44,11 +44,15 @@ describe('CONVERT FUNCTION TESTS ', function() {
 
     it('Should add collection level auth with type as `bearer`' +
     securityTestCases, function(done) {
-      var openapi = fs.readFileSync(securityTestCases, 'utf8');
+      var openapi = fs.readFileSync(securityTestCases, 'utf8'),
+        auth;
       Converter.convert({ type: 'string', data: openapi }, {}, (err, conversionResult) => {
+
+        auth = conversionResult.output[0].data.item[0].request.auth;
 
         expect(err).to.be.null;
         expect(conversionResult.result).to.equal(true);
+        expect(auth).to.be.null;
         expect(conversionResult.output.length).to.equal(1);
         expect(conversionResult.output[0].type).to.equal('collection');
         expect(conversionResult.output[0].data).to.have.property('info');
@@ -59,7 +63,7 @@ describe('CONVERT FUNCTION TESTS ', function() {
       });
     });
 
-    it('Should have noauth at the collection level ' +
+    it('Should have noauth at the collection level if auth type is api-key and properties in header' +
     emptySecurityTestCase, function(done) {
       var openapi = fs.readFileSync(emptySecurityTestCase, 'utf8');
       Converter.convert({ type: 'string', data: openapi }, {}, (err, conversionResult) => {
